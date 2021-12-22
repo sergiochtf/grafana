@@ -18,6 +18,7 @@ import { SaveDashboardModalProxy } from 'app/features/dashboard/components/SaveD
 import { locationService } from '@grafana/runtime';
 import { toggleKioskMode } from 'app/core/navigation/kiosk';
 import { getDashboardSrv } from '../../services/DashboardSrv';
+import store from 'app/core/store';
 
 const mapDispatchToProps = {
   updateTimeZoneForSession,
@@ -57,6 +58,13 @@ type Props = OwnProps & ConnectedProps<typeof connector>;
 class DashNav extends PureComponent<Props> {
   constructor(props: Props) {
     super(props);
+    let kioskMode = locationService.getSearchObject().kiosk;
+    if (store.get('logged')) {
+      kioskMode = null;
+    } else {
+      kioskMode = true;
+    }
+    locationService.partial({ kiosk: kioskMode });
   }
 
   onClose = () => {
