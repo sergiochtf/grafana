@@ -3,6 +3,7 @@ import config from 'app/core/config';
 import { getBackendSrv } from '@grafana/runtime';
 import appEvents from 'app/core/app_events';
 import { AppEvents } from '@grafana/data';
+import store from 'app/core/store';
 
 const isOauthEnabled = () => {
   return !!config.oauth && Object.keys(config.oauth).length > 0;
@@ -43,6 +44,7 @@ export class LoginCtrl extends PureComponent<Props, State> {
 
   constructor(props: Props) {
     super(props);
+    store.delete('logged');
     this.state = {
       isLoggingIn: false,
       isChangingPassword: false,
@@ -64,6 +66,7 @@ export class LoginCtrl extends PureComponent<Props, State> {
       getBackendSrv()
         .put('/api/user/password', pw)
         .then(() => {
+          store.set('logged', true);
           this.toGrafana();
         })
         .catch((err: any) => console.error(err));
